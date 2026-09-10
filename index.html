@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="An interactive phishing awareness challenge." />
+  <title>PhishSense | Cyber Phishing Challenge</title>
+  <style>
+    :root { --ink:#10243e; --muted:#60708a; --line:#dce5ef; --navy:#102b4c; --blue:#2375db; --cyan:#27c4d7; --mint:#0da870; --mint-bg:#e8fbf3; --red:#d9505d; --red-bg:#fff0f1; --paper:#fff; --wash:#f3f7fb; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); font:15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 4% 0%, #e2f4ff 0, transparent 27rem), radial-gradient(circle at 96% 100%, #d9f8f1 0, transparent 25rem), var(--wash); }
+    .shell { width:min(1050px, calc(100% - 32px)); margin:auto; padding:32px 0 48px; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
+    .brand { display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:-.5px; font-size:20px; }
+    .mark { width:36px; height:36px; display:grid; place-items:center; color:white; border-radius:11px; background:linear-gradient(140deg, var(--blue), var(--cyan)); box-shadow:0 8px 16px #2375db38; }
+    .tag { color:#356484; background:#e5f3ff; border:1px solid #cce7fa; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; }
+    .hero { display:grid; grid-template-columns:1fr auto; align-items:end; gap:24px; margin-bottom:20px; }
+    .eyebrow { color:#167187; text-transform:uppercase; font-size:11px; letter-spacing:1.4px; font-weight:800; margin:0 0 6px; }
+    h1 { max-width:620px; margin:0; font-size:clamp(27px, 4vw, 42px); letter-spacing:-1.5px; line-height:1.12; }
+    .intro { color:var(--muted); max-width:570px; margin:11px 0 0; }
+    .score { min-width:128px; padding:14px 18px; text-align:center; background:#102b4c; color:#fff; border-radius:14px; box-shadow:0 12px 26px #102b4c2e; }
+    .score strong { display:block; font-size:23px; line-height:1; } .score span { font-size:11px; text-transform:uppercase; letter-spacing:1px; opacity:.7; }
+    .progress-wrap { margin:22px 0; } .progress-meta { display:flex; justify-content:space-between; margin-bottom:8px; color:var(--muted); font-size:12px; font-weight:700; }
+    .progress { height:8px; overflow:hidden; background:#dfe8f2; border-radius:10px; } .progress > i { display:block; height:100%; width:10%; border-radius:inherit; background:linear-gradient(90deg,var(--blue),var(--cyan)); transition:width .5s cubic-bezier(.2,.8,.2,1); }
+    .game { background:var(--paper); border:1px solid #dce6f0; border-radius:20px; box-shadow:0 20px 45px #243f5912; overflow:hidden; }
+    .question-head { display:flex; justify-content:space-between; gap:18px; padding:20px 26px; border-bottom:1px solid var(--line); background:linear-gradient(90deg,#fbfdff,#f5fbff); }
+    .question-label { color:var(--blue); font-weight:800; font-size:13px; } .tip { color:var(--muted); font-size:12px; }
+    .mail { margin:22px 26px; border:1px solid var(--line); border-radius:13px; overflow:hidden; animation:enter .45s ease both; }
+    @keyframes enter { from{opacity:0; transform:translateY(9px)} to{opacity:1;transform:none} }
+    .mailbar { display:flex; align-items:center; gap:11px; padding:14px 16px; background:#f8fafc; border-bottom:1px solid var(--line); }
+    .avatar { width:34px; height:34px; flex:0 0 auto; display:grid; place-items:center; border-radius:50%; background:#ddecff; color:#2871c8; font-weight:800; }
+    .sender { min-width:0; } .sender b { display:block; font-size:13px; } .sender span { display:block; color:var(--muted); font-size:12px; overflow-wrap:anywhere; } .time { margin-left:auto; color:#8a99ad; font-size:12px; white-space:nowrap; }
+    .mail-body { padding:22px 18px 25px; white-space:pre-line; color:#273b54; line-height:1.65; } .mail-body b { color:#152c47; }
+    .actions { padding:2px 26px 25px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    button { appearance:none; border:0; cursor:pointer; font:inherit; font-weight:800; border-radius:10px; padding:14px; transition:transform .18s, box-shadow .18s, background .18s; } button:not(:disabled):hover { transform:translateY(-2px); } button:focus-visible { outline:3px solid #7bcff2; outline-offset:2px; }
+    .legit { background:#edf4fb; color:#1b537d; border:1px solid #cee1f0; } .phish { color:#fff; background:linear-gradient(120deg,#d74c5b,#eb6971); box-shadow:0 7px 15px #d9505d32; } button:disabled { cursor:default; opacity:.7; }
+    .feedback { display:none; margin:0 26px 26px; border-radius:11px; padding:16px 17px; } .feedback.show { display:block; animation:enter .3s ease; } .feedback.good { background:var(--mint-bg); border:1px solid #b8ecd9; } .feedback.bad { background:var(--red-bg); border:1px solid #f6c7cb; }
+    .feedback-title { display:flex; justify-content:space-between; align-items:center; font-weight:800; } .feedback p { margin:5px 0 0; font-size:13px; color:#40556b; } .next { margin-top:14px; float:right; background:var(--navy); color:white; padding:10px 16px; font-size:13px; }
+    .result { display:none; padding:46px 26px; text-align:center; animation:enter .5s ease; } .result.show { display:block; } .result-icon { width:68px; height:68px; margin:auto; display:grid; place-items:center; border-radius:22px; color:#fff; font-size:29px; background:linear-gradient(140deg,var(--blue),var(--cyan)); box-shadow:0 12px 28px #2375db35; } .result h2 { margin:17px 0 6px; font-size:30px; letter-spacing:-1px; } .result p { max-width:520px; margin:0 auto 21px; color:var(--muted); } .result .scoreline { font-size:15px; font-weight:700; color:#24506d; margin-bottom:24px; } .restart { background:var(--navy); color:#fff; padding:13px 20px; }
+    footer { text-align:center; margin-top:22px; color:#748399; font-size:12px; } footer strong { color:#34718c; }
+    @media (max-width:600px) { .shell { width:min(100% - 24px, 1050px); padding-top:18px; } header { margin-bottom:24px; } .tag { display:none; } .hero { display:block; } .score { display:inline-block; margin-top:16px; min-width:110px; } .question-head,.mailbar { padding-left:15px; padding-right:15px; } .mail { margin:15px; } .actions { padding:1px 15px 18px; } .feedback { margin:0 15px 18px; } .time { display:none; } .mail-body { padding:18px 15px 21px; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header><div class="brand"><div class="mark">⌁</div> PhishSense</div><div class="tag">SECURITY AWARENESS LAB</div></header>
+    <section class="hero"><div><p class="eyebrow">Interactive training</p><h1>Can you spot the real threat?</h1><p class="intro">Review each email like it landed in your inbox. Choose your verdict, then uncover the signals that matter.</p></div><div class="score"><strong id="score">0 / 10</strong><span>Score</span></div></section>
+    <div class="progress-wrap"><div class="progress-meta"><span id="progressText">EMAIL 1 OF 10</span><span>THREAT DETECTION</span></div><div class="progress"><i id="progress"></i></div></div>
+    <section class="game" aria-live="polite">
+      <div id="quiz"><div class="question-head"><span class="question-label" id="question">INBOX REVIEW</span><span class="tip">Trust your instincts — then inspect the details.</span></div><article class="mail" id="mail"></article><div class="actions"><button class="legit" onclick="answer('legitimate')">✓&nbsp; Legitimate</button><button class="phish" onclick="answer('phishing')">⚠&nbsp; Phishing</button></div><div class="feedback" id="feedback"></div></div>
+      <div class="result" id="result"><div class="result-icon">✓</div><p class="eyebrow">Challenge complete</p><h2 id="level"></h2><p id="resultText"></p><div class="scoreline" id="finalScore"></div><button class="restart" onclick="restartGame()">Try the challenge again</button></div>
+    </section>
+    <footer>Think before you click. <strong>Pause · Inspect · Report</strong></footer>
+  </main>
+  <script>
+    const emails = [
+      {name:'Maya Chen', address:'maya.chen@northstar-consulting.com', subject:'Updated agenda — Q3 planning session', body:'Hi team,\n\nThe agenda for Thursday’s Q3 planning session is available in the shared workspace. Please add your discussion items by Wednesday afternoon.\n\nThanks,\nMaya', type:'legitimate', why:'This uses the organization’s expected domain, makes a routine request, and does not pressure you to enter credentials or open an unfamiliar link.'},
+      {name:'Microsoft 365 Security', address:'security-alert@micros0ft-accountverify.com', subject:'Action required: Your password expires today', body:'Your Microsoft 365 password will expire in 2 hours. Failure to verify immediately will permanently lock your account.\n\nVERIFY ACCOUNT NOW → http://microsoft-verify-login.co/reset', type:'phishing', why:'The sender domain uses a zero in “micros0ft,” and the urgent threat plus a non-Microsoft link are classic credential-theft signs.'},
+      {name:'Jordan Ellis', address:'jordan.ellis@northstar-consulting.com', subject:'Client workshop notes', body:'Hello,\n\nThanks for today’s workshop. I uploaded the notes and action list to the client folder we discussed on the call.\n\nBest,\nJordan', type:'legitimate', why:'This follows an expected conversation, uses a known internal address, and references the established shared folder without demanding a login.'},
+      {name:'DHL Express', address:'delivery-notice@dhl-shipping-support.net', subject:'Delivery failed — pay customs fee', body:'We could not deliver your parcel. A $2.99 customs fee must be paid today or your package will be returned.\n\nPay fee: dhl-track-payment.net', type:'phishing', why:'An unexpected fee, pressure to act today, and a sender/link domain that is not the carrier’s official domain make this suspicious.'},
+      {name:'People Operations', address:'peopleops@northstar-consulting.com', subject:'Open enrollment reminder', body:'Annual benefits enrollment opens Monday, October 7. You can review plan materials in the HR portal as usual. Questions? Reply here or contact your benefits partner.\n\nPeople Operations', type:'legitimate', why:'The message uses a familiar internal sender and directs employees to the usual portal rather than embedding a surprise sign-in link.'},
+      {name:'IT Help Desk', address:'it-helpdesk@northstar-consulting.com', subject:'New MFA enrollment window', body:'We’re rolling out a new MFA option next week. Visit the IT service catalog from the company intranet to choose an enrollment appointment. No action is required today.', type:'legitimate', why:'A legitimate announcement avoids manufactured urgency and directs users through a known internal channel instead of a supplied external link.'},
+      {name:'Accounts Payable', address:'accounts-payable@northstar-consulting.co', subject:'RE: Revised banking details — urgent', body:'Please update the banking details for our latest invoice before the 3 PM payment run. The new account is attached. Do not call as I am in meetings.\n\nRegards,\nAccounts Payable', type:'phishing', why:'The sender domain is missing the final “m,” and the request to change bank details while discouraging verification is a business-email-compromise pattern.'},
+      {name:'Zoom', address:'no-reply@zoom.us', subject:'Your meeting recording is ready', body:'Your cloud recording “Project kickoff” is now available. Sign in to Zoom through your normal app or visit zoom.us to view and manage recordings.', type:'legitimate', why:'The sender uses Zoom’s actual domain and provides a safe route through the normal app or official site, with no suspicious link or urgency.'},
+      {name:'Shared Document', address:'notify@sharepoint-documents365.com', subject:'Alex shared “Confidential Salary Review” with you', body:'A confidential document has been shared with you. Access will be removed in 15 minutes.\n\nOpen document: bit.ly/3Xdocument', type:'phishing', why:'The generic sender domain is not Microsoft, the sensitive subject creates curiosity, the deadline pressures action, and the shortened link hides its destination.'},
+      {name:'Northstar Finance', address:'finance@northstar-consulting.com', subject:'September expense reimbursement processed', body:'Your September expense reimbursement has been processed and will appear in your next payroll cycle. The amount and status are visible in the existing expense system.\n\nFinance team', type:'legitimate', why:'This is an informational update from the expected domain and points to the established expense system rather than requesting credentials or payment.'}
+    ];
+    let index = 0, score = 0, locked = false;
+    const $ = id => document.getElementById(id);
+    function render() { const e = emails[index]; locked=false; $('question').textContent = `INBOX REVIEW · ${String(index+1).padStart(2,'0')}`; $('progressText').textContent=`EMAIL ${index+1} OF ${emails.length}`; $('progress').style.width=`${((index+1)/emails.length)*100}%`; $('mail').innerHTML=`<div class="mailbar"><div class="avatar">${e.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div><div class="sender"><b>${e.name}</b><span>${e.address}</span></div><span class="time">9:42 AM</span></div><div class="mail-body"><b>Subject: ${e.subject}</b>\n\n${e.body}</div>`; $('feedback').className='feedback'; document.querySelectorAll('.actions button').forEach(b=>b.disabled=false); }
+    function answer(choice) { if(locked) return; locked=true; const e=emails[index], correct=choice===e.type; if(correct) score++; $('score').textContent=`${score} / 10`; document.querySelectorAll('.actions button').forEach(b=>b.disabled=true); const f=$('feedback'); f.className=`feedback show ${correct?'good':'bad'}`; f.innerHTML=`<div class="feedback-title"><span>${correct?'✓ Correct call.':'✕ Not quite.'}</span><span>${e.type==='phishing'?'PHISHING':'LEGITIMATE'}</span></div><p>${e.why}</p><button class="next" onclick="next()">${index===emails.length-1?'See assessment':'Next email'} →</button>`; }
+    function next() { index++; if(index<emails.length) render(); else finish(); }
+    function finish() { $('quiz').style.display='none'; $('progress').style.width='100%'; $('progressText').textContent='CHALLENGE COMPLETE'; let level=score>=9?'Expert':score>=6?'Intermediate':'Beginner'; let copy=score>=9?'Outstanding. You recognized the subtle indicators that help stop phishing before it becomes an incident.':score>=6?'A strong foundation. Review every sender, URL, and unexpected request before taking action.':'Keep building your phishing radar. Slow down when a message uses urgency, fear, or an unfamiliar link.'; $('level').textContent=`${level} defender`; $('resultText').textContent=copy; $('finalScore').textContent=`You identified ${score} of ${emails.length} emails correctly.`; $('result').className='result show'; }
+    function restartGame() { index=0; score=0; $('score').textContent='0 / 10'; $('result').className='result'; $('quiz').style.display='block'; render(); }
+    render();
+  </script>
+</body>
+</html>
